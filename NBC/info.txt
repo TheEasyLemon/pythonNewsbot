@@ -1,0 +1,7 @@
+NBC (National Broadcasting Company)
+
+NBC.py
+
+XML Sitemap Formula:
+
+https://www.nbcnews.com/sitemap/nbcnews/sitemap-(year)-(month)-article.xml

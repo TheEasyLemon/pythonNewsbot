@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# execute each of the news collection .py files
+
+/usr/bin/python3 Documents/pythonNewsbot/AJZ/ajz.py
+#/usr/bin/python3 Documents/pythonNewsbot/NBC/nbc.py
+#/usr/bin/python3 Documents/pythonNewsbot/Reuters/reut.py
+#/usr/bin/python3 Documents/pythonNewsbot/Economist/econ.py
+
+
+
+# execute folder script, which creates the folders
+
+#FOLDERSCRIPT_PATH = "Documents/pythonNewsbot/Dev_Materials/FolderScript"
+
+#sudo "$FOLDERSCRIPT_PATH"
+

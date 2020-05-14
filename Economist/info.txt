@@ -1,0 +1,7 @@
+2020 1
+
+DO NOT EDIT ABOVE NUMBERS. In the format year, quarter number.
+
+The Economist - econ.py
+
+Format: https://www.economist.com/sitemap-(year)-Q(quarter number).xml

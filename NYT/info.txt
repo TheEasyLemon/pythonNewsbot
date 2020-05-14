@@ -1,0 +1,11 @@
+2019 11
+
+DO NOT EDIT ABOVE NUMBERS.
+
+New York Times - NYT
+
+Format: https://www.nytimes.com/sitemaps/www.nytimes.com/sitemap_(year)_(month).xml.gz
+
+All the articles of the month are on one xml sitemap.
+Check to make sure with .split() that it contains instances of the day.
+Also check for the fragments "us", "politics", "business", "world", "opinion"

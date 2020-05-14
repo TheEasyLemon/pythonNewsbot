@@ -1,0 +1,11 @@
+2020 2
+
+DO NOT EDIT ABOVE NUMBERS.
+
+Al Jazeera - AJZ
+
+Format: https://www.aljazeera.com/xml/sslsitemaps/sitemap(year)_1.xml
+
+All the articles of the year are on one xml sitemap.
+Check to make sure with .split() that it contains instances of the month.
+Also check for the fragment "news" as part of the URL.

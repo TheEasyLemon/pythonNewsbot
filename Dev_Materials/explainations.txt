@@ -1,0 +1,156 @@
+Hey Abby! Dawson here.
+
+I thought I'd write out a line-by-line explanation so that the inner workings of this script becomes a little more clear to you. I'm going to try to make this basic, but it can get a little pedantic at times, so bear with me. In the process of learning something that seems to be way beyond you (trust me, I felt the same way when I started...I had very little background knowledge going into this), Google will be your best friend. Read up on what you can, Wikipedia, Stack Overflow, and WW3 Schools will become your life preservers. That said, please reach out to me if this doesn't make sense!
+
+BACKGROUND
+
+This program just does 2 things:
+1. Accesses XML sitemaps to get a list of article URLs
+2. Reads through each article URL for its title, authors, information, and date
+
+This kind of program is called a web scraper -- it scrapes the internet for information.
+
+Step 1: XML
+How do news sources store information? XML sitemaps -- Extensible Markup Language. This kind of language isn't a logic-defined one like Python or Java, but rather is for use by humans to categorize and store information in a readable, clear way. For example, from NBC's sitemap for December of 2019 (https://www.nbcnews.com/sitemap/nbcnews/sitemap-2019-12-article.xml):
+
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+	<loc>
+	https://www.nbcnews.com/politics/donald-trump/trump-fans-upset-canada-cut-		president-s-home-alone-2-n1107506
+	</loc>
+	<lastmod>2019-12-27T00:37:00.000Z</lastmod>
+    </url>
+    <url>
+	<loc>
+	https://www.nbcnews.com/news/world/lawmaker-aims-oust-scandal-hit-netanyahu-likud-	primary-n1107191
+	</loc>
+	<lastmod>2019-12-26T23:33:19.000Z</lastmod>
+    </url>
+    Etc...with more <url>s and </url>s
+</urlset>
+
+The information is stored in a hierarchy, with tags (specified by a <> or </> to show beginning and end) to show the name of the information's "level". The highest level is <urlset> because it contains the set of all of the urls. The next level is <url>, and it contains the information <loc> which is the actual URL and <lastmod>, which is when the article was last modified.
+
+You'll also notice that the XML sitemap is based around date. All of the articles published in the same month, or year, or quarter are grouped into one sitemap. This will be important moving on.
+
+My program uses the python library BeautifulSoup to search up all the instances of <loc> in the XML sitemap. Once we have a list of the URLs, we can move onto step 2.
+
+Step 2: HTML
+Now that we have the URL, we still need to get the title, authors, publication date, and actual text oft the article. Once we have all these things, we can make our final .txt file. So how do articles store this information? HTML -- or HyperText Markup Language. HTML is in many ways a more specific, extended version of XML. Specific tags have specific meaning in HTML, so the language is more rigid, but more useful for making web pages. Here's an example from the first URL we found in the NBC sitemap (https://www.nbcnews.com/politics/donald-trump/trump-fans-upset-canada-cut-president-s-home-alone-2-n1107506)
+
+<html lang="en" data-reactroot class="gr_nbcnews_com">
+   <head>...</head>
+   <body class="articlePage savory news"...>
+	...(not important stuff)
+	<div id="content">
+	   ...(not important stuff)
+	   <div class="article-body__content">
+		<p class="endmarkEnabled">
+		    Trump fans, including the president's oldest son, ripped the Canadian 		    Broadcasting Corporation on Thursday for editing out his father's 			    cameo in "Home Alone 2: Lost in New York."
+		</p>
+	   </div>
+	</div>
+    </body>
+</html>
+
+OK wow. That's a lot to take in, and I had to simplify the HTML a whole lot to make it look this simple. But here's the good thing -- you already know most of what you need to know from XML.
+
+Again, the highest level of organization of the <html> tag. Within this is the <head> tag, which contains metadata (data about other data) concerning the complicated stuff on the website (popups, buttons, video players...websites are complicated!). The good news is that we're not looking for any of that stuff.
+
+The tag we're looking for is the <p>, or paragraph tag. It contains the actual article. It's wrapped within <div> tags, which is just a way to separate the script into more manageable chunks.
+
+There's another layer of complexity we need to note here, too - what are the "class" and "id" things within the tags? In HTML, these tags can also be called elements. These elements make up the website with actual components (like a block of text). Within the tags of these elements, there are attributes, such as "class" and "id". 
+
+When we searched for <loc> tags, we had the benefit that all the information stored in them were used to store URLs. But for the <p> element, it's possible some paragraphs might be used for ads or not important information! In this case, we search for <p> elements that also have a specific class -- "endmarkEnabled". When you open up the HTML, all the relevant information shares this specific attribute.
+
+ORGANIZATION
+
+The pythonNewsbot folder is separated into several files and folders.
+
+README.txt is a required .txt file on every programming project. It introduces newcomers to the basics of the program, so they can help understand it.
+
+Dev_Materials is a folder with some example python scripts (.py files). 
+- test.html and test.py contain sample implementations of the BeautifulSoup library (we'll cover that later.) 
+- helloworld.py is just a program that prints "hello world" to the console/shell (if you run it with python installed, you'll see what I mean!) 
+- main.py contains Ronik's implementation of a citation system that I basically stole to put into my newsbot (and he stole that code...welcome to programming! Why do work someone else has already done)
+- explainations.txt is what you're reading right now!
+
+The function of the folder News (This wasn't on the version I sent you first) and Zip Files will be covered later in the DISTRIBUTION section.
+
+Now, we finally get to the meat and potatoes of this program -- the five folders titled Reuters, NBC, Economist, AJZ, and NYT. Each of these folders are pretty similar in terms of content. All are functional except for NYT.
+
+Each contains:
+- info.txt, a document that contains the last date/quarter/year the program was run. This is important to store so that we don't access XML sitemaps that have articles from previous months that we've already scraped.
+- [something].py, the script that runs the actual scraper.
+- lib, a folder that contains the gritty details of formatting and finding the specific elements in the HTML.
+
+EXAMPLE
+
+The example I'm choosing to use is ajz.py. Inside are comments, but this will contains a line-by-line breakdown of exactly what the computer is doing at each step.
+
+Lines 1-9, "import requests" to "from lib.datafinder import Datafinder"
+
+These lines import the various outside modules that we'll need.
+Line 1: requests is how we access the HTML of websites. On its most basic level, we give it a URL and it returns the HTML.
+Line 2: datetime is a module that handles date and time
+Line 3: bs4 is short for BeautifulSoup 4, the module that helps us search for specific tags in HTML and XML. bs4 is the library, BeautifulSoup is the module that we import from the library.
+Lines 4-7: these modules are used in other sources' code. To add sources, you mainly need to copy and paste this script, so sometimes I import stuff that I don't need. Whoops!
+Lines 8-9: These are the modules that I define in the "lib" folder. These can be treated as a black box for now, which I will describe later.
+
+Lines 15-28, "days_in_month ={" to "}"
+
+This data structure is a dictionary, or basically a function. You put in 1, it gives you 31 because there are 31 days in January. This just helps when I go through individual days, but since Al Jazeera has a sitemap for every year, it doesn't really matter.
+
+Lines 32-35, "with open("info.txt", "r") as txt:" to "last_opened = line.split()"
+
+Line 32: Opens up the "info.txt" folder on "r", or "read only" mode. We will now refer to "info.txt" as a new variable called "txt".
+Line 33: We create a new variable called lines that now holds all of the lines in txt.
+Line 34: We create a new variable called line that holds just the first line of lines. It's index 0 because lines is an array...ok if that makes no sense to you I'll have to explain it to you in person!!
+Line 35: We create a new variable called last_opened that splits line (a string) into an array of strings. In this case, the text "2019 12" will turn into an array where index 0 refers to "2019" and index 1 refers to "12".
+
+Line 38, "now = datetime.datetime.now()"
+It just creates a new variable called "now" that references the current time.
+
+Lines 42-47, "with open("info.txt", "w") as txt:" to "txt.write(n)"
+Basically, it replaces the entirety of the document with what was there before, just editing the most recent open date. That's what the txt.write() does.
+
+Lines 50-53, "add_zeroes(num):" to "return str(num)"
+It's a function that just turns any single-digit integer into a double-digit integer. 3 becomes "03", and 11 remains "11". It also turns an integer into a string.
+
+Line 56, "url =..."
+New variable url that contains the XML sitemap. There's only one for the year, so we don't need to mess with more than one.
+
+Lines 61-71, "def soup_to_citation(url, soup):" to "return citation"
+This is a function that takes a url and "soup" (we'll cover that later) and returns a citation. This is the black box we were referencing...I'll need to cover this in person. Basically, "soup" is just the raw HTML.
+
+Lines 74-79, "print("Attemping..." to "print("Successful Extraction..."
+Line 74: If you're wondering what the %s is, it's a placeholder for url. You can use this nifty trick if you want to insert a variable in the middle of a string.
+Line 75: We request the HTML from the url and store the response as sitemap. 
+Line 76: sitemap.status_code is a protocol built into requests. If our request goes bad or we're requesting something that doesn't exist, we can print that. 404 means that it doesn't exist. 200 means everything is good! You can search this stuff up, it's kind of fun to look at.
+
+Lines 81-88, "sitemap_soup..." to "sitemap_urls.append(tag.string)"
+Line 81: We turn the sitemap's text (the raw HTML) into "sitemap_soup". "Soup" is something defined by BeautifulSoup, it's an object, or class if you're speaking Java. Really those two are the same thing. Not the same as a HTML class though. We use the "html.parser" to parse it, because it's in HTML. These parsers are predefined by BeautifulSoup, they only have 4.
+Line 82: "loc" is an array of all the instances where the <loc> tag appears. "loc" should now be an array of URLs.
+Line 83: sitemap_urls is an empty array.
+Line 86: for every item in the array called "loc", we will name it "tag" as we iterate through them. 
+Line 87: if the string "news" (which is just a variable for the URL) and the current month (last_opened[1] is the last opened month, last_opened[0] is the last opened year) are both in the URL, then we append (or add) it to the array sitemap_urls.
+Line 88: See line 87.
+
+Lines 92-103, "for article_url in sitemap_urls" to "format_title + ".txt"
+Line 92: for every item in the array sitemap_urls, we'll call it article_url.
+Line 93: We request the article URL, and store it as article.
+Line 94: Same deal here. If the request is bad, we let the user know by printing it.
+Line 95: See line 94.
+Lines 96-98: We make a Citation object with the soup_to_citation function that we defined earlier. It's complicated,
+Line 100: We now give it a title, with some string formatting going on. It's not important.
+Lines 102-103: The path is where the new .txt file will eventually be stored. You can see how it's going within the "News" folder, and inside the "AJZ" folder within that.
+
+Lines 105-126: In this case, we just write all of the data we get from the citation into the file. I do some formatting that's not too important, but that's it! Congratulations, you made it through (phew).
+
+DISTRIBUTION
+
+Currently the distribution system is pretty human-dependent. All of the [something].py scripts put the files in a folder called "News", which contains the sub-folders "Reuters",  "NBC", "Econ", and "AJZ". (NOTE: This is not the case on the zip file I gave you. I create this folder manually every time I run the program.)
+
+Once I run each [something].py script and all of the individual folders inside "News" are filled with the most recent news, I rename the "News" folder to the tournament it's meant for. I zip the file, and I put it on Google Drive, and I share it with everyone.
+
+Then, I put the zip file into the Zip Files folder (it contains all of the previous zip files) and I delete the unzipped folder. Then before I run it again for another tournament, I recreate "News" with "Reuters", "NBC", "Econ", and "AJZ" in it again.

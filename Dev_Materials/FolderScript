@@ -1,0 +1,21 @@
+#!/bin/bash
+
+echo creating folder system for news...
+sudo mkdir -v Documents/pythonNewsbot/News
+sudo mkdir -v Documents/pythonNewsbot/News/AJZ
+sudo mkdir -v Documents/pythonNewsbot/News/Econ
+sudo mkdir -v Documents/pythonNewsbot/News/NBC
+sudo mkdir -v Documents/pythonNewsbot/News/Reuters
+sudo mkdir -v Documents/pythonNewsbot/News/FP
+sudo mkdir -v Documents/pythonNewsbot/News/Brookings
+
+echo changing folder permissions
+sudo chmod 777 Documents/pythonNewsbot/News
+sudo chmod 777 Documents/pythonNewsbot/News/AJZ
+sudo chmod 777 Documents/pythonNewsbot/News/Econ
+sudo chmod 777 Documents/pythonNewsbot/News/NBC
+sudo chmod 777 Documents/pythonNewsbot/News/Reuters
+sudo chmod 777 Documents/pythonNewsbot/News/FP
+sudo chmod 777 Documents/pythonNewsbot/News/Brookings
+
+echo completed

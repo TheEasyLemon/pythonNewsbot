@@ -1,0 +1,16 @@
+# Generated Data:
+News/
+Zip Files/
+
+# __pycache__
+NYT/lib/__pycache__/
+Reuters/lib/__pycache__/
+NBC/lib/__pycache__/
+Economist/lib/__pycache__/
+AJZ/lib/__pycache__/
+ForeignPolicy/lib/__pycache__/
+Forbes/lib/__pycache__/
+Brookings/lib/__pycache__/
+
+# .DS_Store (so annoying...)
+.DS_Store

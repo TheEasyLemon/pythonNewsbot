@@ -1,0 +1,6 @@
+Reuters
+
+XML Sitemap formula:
+
+https://www.reuters.com/sitemap_(year)(month)(day)-(year)(month)(day).xml
+
